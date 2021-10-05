@@ -13,17 +13,16 @@ import java.math.BigDecimal;
 public class Price {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long vehicleid;
 
     private String currency;
     private BigDecimal price;
-    private Long vehicleid;
+
 
     public Price() {
     }
 
-    public Price(Long id, String currency, BigDecimal price, Long vehicleId) {
-        this.id = id;
+    public Price(String currency, BigDecimal price, Long vehicleId) {
         this.currency = currency;
         this.price = price;
         this.vehicleid = vehicleId;

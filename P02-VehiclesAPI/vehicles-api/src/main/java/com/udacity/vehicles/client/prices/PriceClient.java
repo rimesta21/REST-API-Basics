@@ -32,10 +32,11 @@ public class PriceClient {
      */
     public String getPrice(Long vehicleId) {
         try {
+            String path = "prices/" + vehicleId.toString();
             Price price = client
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("services/price/")
+                            .path(path)
                             .queryParam("vehicleId", vehicleId)
                             .build()
                     )
