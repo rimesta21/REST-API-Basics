@@ -72,6 +72,10 @@ class CarController {
          *   Update the first line as part of the above implementing.
          */
         Car car = carService.findById(id);
+        return getCarResponseEntity(id, car);
+    }
+
+    private ResponseEntity<Car> getCarResponseEntity(Long id, Car car) {
         Link selfLink = linkTo(CarController.class).slash(id).withRel("carById");
         Link carsLink = linkTo(methodOn(CarController.class).list()).withRel("allCars");
         car.add(selfLink);
@@ -102,7 +106,7 @@ class CarController {
         car.add(idLink);
         car.add(carsLink);
         car.add(selfLink);
-        return new ResponseEntity<>(car, HttpStatus.OK);
+        return new ResponseEntity<>(car, HttpStatus.CREATED);
     }
 
     /**
@@ -122,12 +126,7 @@ class CarController {
         car.setId(id);
         carService.save(car);
         car = carService.findById(id);
-        Link idLink = linkTo(CarController.class).slash(id).withRel("carById");
-        Link carsLink = linkTo(methodOn(CarController.class).list()).withRel("allCars");
-        car.add(idLink);
-        car.add(carsLink);
-
-        return new ResponseEntity<>(car, HttpStatus.OK);
+        return getCarResponseEntity(id, car);
     }
 
     /**
