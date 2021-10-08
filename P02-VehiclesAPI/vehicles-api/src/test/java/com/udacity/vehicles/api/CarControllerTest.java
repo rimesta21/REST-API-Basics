@@ -6,9 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,7 +106,7 @@ public class CarControllerTest {
         mvc.perform(
                 get("/cars"))
                         .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaTypes.HAL_JSON))
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(content().json("{}")
         );
 
@@ -133,7 +131,7 @@ public class CarControllerTest {
         mvc.perform(
                         get("/cars/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaTypes.HAL_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json("{}")
                 );
 
@@ -166,6 +164,38 @@ public class CarControllerTest {
         verify(carService, times(1)).delete(1L);
 
     }
+
+    /**
+     * Tests the update of a single car by ID
+     * @throws Exception if the delete operation of a vehicle fails
+     */
+    @Test
+    public void updateCar() throws Exception{
+        Car car = getCar();
+        mvc.perform(
+                post(new URI("/cars"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.write(car).getJson()));
+        car.setCondition(Condition.NEW);
+        Details details = car.getDetails();
+        details.setExternalColor("blue");
+        details.setModelYear(2019);
+        car.setDetails(details);
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.write(car).getJson()))
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(content().json("{}"));
+        //One time for the post and one time for the put
+        verify(carService, times(2)).save(car);
+
+
+    }
+
+
+
 
     /**
      * Creates an example Car object for use in testing.
